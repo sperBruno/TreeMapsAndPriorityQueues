@@ -10,11 +10,32 @@ import java.util.TreeMap;
 
 public class MovieRatingsParser {
 
-	public static TreeMap<String, PriorityQueue<Integer>> parseMovieRatings(List<UserMovieRating> allUsersRatings) {
-		
-		/* IMPLEMENT THIS METHOD! */
-		
-		return null; // this line is here only so this code will compile if you don't modify it
-	}
+    public static TreeMap<String, PriorityQueue<Integer>> parseMovieRatings(List<UserMovieRating> allUsersRatings) {
+
+        TreeMap<String, PriorityQueue<Integer>> movieRatingsParserMap = new TreeMap<>();
+        PriorityQueue<Integer> aux;
+        if (allUsersRatings != null && !allUsersRatings.isEmpty()) {
+            for (UserMovieRating rating : allUsersRatings) {
+
+                if (rating == null || rating.getMovie() == null || rating.getMovie().isEmpty() ||  rating.getUserRating() < 0) {
+                    System.out.println("Skip movie");
+                    continue;
+                }
+                System.out.println("Movie " + rating.getMovie());
+                System.out.println("Rating " + rating.getUserRating());
+                if (movieRatingsParserMap.containsKey(rating.getMovie().toLowerCase())) {
+                    aux = movieRatingsParserMap.get(rating.getMovie().toLowerCase());
+                    aux.add(rating.getUserRating());
+                    System.out.println(aux);
+                    movieRatingsParserMap.put(rating.getMovie().toLowerCase(), aux);
+                } else {
+                    aux = new PriorityQueue<>();
+                    aux.add(rating.getUserRating());
+                    movieRatingsParserMap.put(rating.getMovie().toLowerCase(), aux);
+                }
+            }
+        }
+        return movieRatingsParserMap;
+    }
 
 }
