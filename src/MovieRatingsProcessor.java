@@ -38,38 +38,45 @@ public class MovieRatingsProcessor {
             }
             listOfMovie.sort(String::compareToIgnoreCase);
         }
-        return listOfMovie; // this line is here only so this code will compile if you don't modify it
+        return listOfMovie;
     }
 
     public static TreeMap<String, Integer> removeAllRatingsBelow(TreeMap<String, PriorityQueue<Integer>> movieRatings, int rating) {
-        System.out.println(rating);
-        TreeMap<String, PriorityQueue<Integer>> auxRatingInput = movieRatings;
+        TreeMap<String, PriorityQueue<Integer>> auxRatingInput = new TreeMap<>();
         TreeMap<String, Integer> deletedMovies = new TreeMap<>();
-        ArrayList<String> listToremove = new ArrayList<>();
         if (movieRatings != null) {
-            for (Map.Entry<String, PriorityQueue<Integer>> entry : movieRatings.entrySet()) {
+            addValueToAuxMap(movieRatings, auxRatingInput);
+
+            for (Map.Entry<String, PriorityQueue<Integer>> entry : auxRatingInput.entrySet()) {
                 int count = 0;
-                System.out.println(entry.getValue());
-                for (Integer item : entry.getValue()) {
+                int index = count;
+                int numberOfRating = entry.getValue().size();
+                int sizeOfRating = numberOfRating;
+                Object[] it = entry.getValue().toArray();
+                while (numberOfRating > 0) {
+                    int item = (int) it[index];
                     if (item < rating) {
-                        ///auxRatingInput.get(entry.getKey()).remove(item);
                         count++;
+                        movieRatings.get(entry.getKey()).remove(item);
                     }
+                    index++;
+                    numberOfRating--;
                 }
-                if (entry.getValue().size() == count) {
-                    //auxRatingInput.remove(entry.getKey());
-                    listToremove.add(entry.getKey());
+                if (sizeOfRating == count) {
+                    movieRatings.remove(entry.getKey());
+                    deletedMovies.put(entry.getKey(), count);
                 } else if (count > 0) {
 
                     deletedMovies.put(entry.getKey(), count);
-                    System.out.println(deletedMovies);
                 }
             }
         }
-        for (String item: listToremove) {
-            deletedMovies.remove(item);
-        }
-        System.out.println(deletedMovies);
         return deletedMovies;
+    }
+
+    private static void addValueToAuxMap(TreeMap<String, PriorityQueue<Integer>> movieRatings, TreeMap<String, PriorityQueue<Integer>> auxRatingInput) {
+        for (Map.Entry<String, PriorityQueue<Integer>> entry : movieRatings.entrySet()) {
+            auxRatingInput.put(entry.getKey(), entry.getValue());
+        }
     }
 }
